@@ -1,18 +1,22 @@
-# -*- coding: utf-8 -*-
-# search for high school locations on Google
+# Scrape high school lats/longs from Wikipedia
 
+# Edit to your exported Wufoo form CSV
 CSVDATA = "../blueprint.csv"
+# JSON output file
 OUTPUTFILE = "highschools.js"
 
+# Vars
 highschools = []
 highschool_locations = {}
 highschool_count = {}
 # areacodes = []
 # fancy_words = ["best", "excellence", "specialized", "magnet", "premier", "recognition", "top-performing"]
 
+# Depedencies
 import csv, re, wikipedia, bs4
 
-# gather a list of high schools from Wufoo CSV form data
+
+# Get list of high schools, with sanitization
 with open(CSVDATA, 'rb') as csvfile:
 		registrationreader = csv.reader(csvfile, delimiter=",", quotechar="|")
 		for row in registrationreader:
@@ -40,10 +44,8 @@ with open(CSVDATA, 'rb') as csvfile:
 				# 	areacode = areacode[0:3]
 				# areacodes.append(areacode)
 
-# scrape high school info off Wikipedia:
-# 1. location
-# 2. "excellence" level -- let's see how many times it says "best" or "excellence" vs "growing" and "improvement"
 
+# Scrape high school info off Wikipedia
 for highschool in highschools[2:]:
 	try:
 		wikisearch = wikipedia.search(highschool)
@@ -55,7 +57,7 @@ for highschool in highschools[2:]:
 		longitude = re.findall(r'[7-9,1][0-9]{1,2}\.[0-9]{3,10}', wikipage)
 		try:
 			highschool_locations[highschool] = latitude[0] + ",-" + longitude[0]
-			# print(highschool + " // " + latlong[0] + ", " + latlong[1])
+			print(highschool + " // " + latlong[0] + ", " + latlong[1])
 		except:
 			print("Uh oh, no lat or long found for " + highschool + ". Continuing...")
 			continue
@@ -63,19 +65,19 @@ for highschool in highschools[2:]:
 		try:			
 			zipcode = re.findall(r' [0-9]{5}', wikiparse.prettify())[0][1:]
 			highschool_locations[highschool] = zipcode
-			# print(highschool + " // " + zipcode)
+			print(highschool + " // " + zipcode)
 		except:
 			try:
 				wikiparse = bs4.BeautifulSoup(wikipage)
 				locality = wikiparse.find('span', attrs={'class': 'locality'}).text
 				region = wikiparse.find('span', attrs={'class': 'region'}).text
 				highschool_locations[highschool] = locality + " " + region
-				# print(highschool + " // " + locality + " " + region)
+				print(highschool + " // " + locality + " " + region)
 			except:
 				print("Couldn't find " + highschool + " on Wikipedia.")
 
 
-# print formatted json for Goog Maps
+# Print formatted json for Goog Maps
 
 # highschools['High School Name'] = {
 # center: new google.maps.LatLng(LATITUDE, LONGITUDE),
@@ -95,5 +97,6 @@ for highschool, count in highschool_count.items():
 outputfile.close()
 
 print("\nDone!")
+
 # print("\n\n\n=================\nHigh school locations: \n\n")
 # print highschool_locations
