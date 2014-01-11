@@ -16,7 +16,7 @@
         height: 100%;
     }
     h2 {
-        font-size: 12px;
+        font-size: 14px;
         margin: 0;
         padding: 0;
     }
@@ -27,24 +27,35 @@
     </script>
     <script type="text/javascript">
     var map;
-    var geocoder;
     var totalSchools = 0;
     var totalCount = 0;
     var Boston = new google.maps.LatLng(42.358431, -71.059773)
 
         function initialize() {
-            geocoder = new google.maps.Geocoder();
-
             var mapOptions = {
                 center: new google.maps.LatLng(39.232253, -96.020508),
                 zoom: 5,
                 scrollwheel: true,
                 minZoom: 5,
-                maxZoom: 8
+                maxZoom: 9
             };
 
             map = new google.maps.Map(document.getElementById("map-canvas"),
                 mapOptions);
+
+            var bostonCircleOptions = {
+                strokeColor: "#00FF00",
+                strokeOpacity: 0.8,
+                strokeWeight: 1,
+                fillColor: "#00FF00",
+                fillOpacity: 0.2,
+                map: map,
+                clickable: false,
+                center: Boston,
+                radius: 100000
+            };
+            var bostonCircle = new google.maps.Circle(bostonCircleOptions);
+
 
             var i = 0;
 
@@ -56,8 +67,9 @@
                 totalCount += highschools[name].count;
 
                 var locationColor = 0;
+                var distanceFromBoston = google.maps.geometry.spherical.computeDistanceBetween(Boston, highschools[name].center);
 
-                if (google.maps.geometry.spherical.computeDistanceBetween(Boston, highschools[name].center) < 100000) {
+                if (distanceFromBoston < 100000) {
                     locationColor = '#2400e0';
                 } else {
                     locationColor = '#FF0000';
@@ -72,12 +84,12 @@
                     map: map,
                     clickable: true,
                     center: highschools[name].center,
-                    radius: Math.log(highschools[name].count + 1) * (1 / (map.getZoom() - 4 )) * 30000
+                    radius: Math.log(highschools[name].count + 1) * (1 / (map.getZoom() - 4)) * 30000
                 };
 
 
                 var hsCircle = new google.maps.Circle(highschoolOptions);
-                addInfoWindow(hsCircle, name, highschools[name].count);
+                addInfoWindow(hsCircle, name, highschools[name].count, distanceFromBoston);
                 addCircleZoom(hsCircle, highschools[name].count);
 
             };
@@ -96,23 +108,27 @@
     function addCircleZoom(circle, count) {
         google.maps.event.addListener(map, 'zoom_changed', function() {
             var newzoom = map.getZoom();
-            if (newzoom == 8) {
-                circle.setRadius((Math.log((count + 1)*.8)) * 4000);
+            if (newzoom >= 8) {
+                circle.setRadius((Math.log((count + 1) * .8)) * 4000);
             } else {
                 circle.setRadius(Math.log(count + 1) * (1 / (newzoom - 4)) * 30000);
             }
         });
     }
 
-    function addInfoWindow(hsCircle, name, count) {
+    function addInfoWindow(hsCircle, name, count, dist) {
+        var studentPlural = " students ";
+        if (count == 1) {
+            studentPlural = " student ";
+        }
         var hsInfo = new google.maps.InfoWindow({
-            content: '<h2>' + name + '</h2>' + count,
+            content: '<h2>' + name + '</h2>' + count + studentPlural + " &nbsp;&nbsp; | &nbsp;&nbsp; dist: " + (Math.round(dist / 1000, 0)) + "km",
             disableAutoPan: true
         });
 
         google.maps.event.addListener(hsCircle, 'mouseover', function() {
             var infocenter = hsCircle.getCenter();
-            var p = infocenter.lat() + 0.12;
+            var p = infocenter.lat() + 0.1;
             hsInfo.setPosition(new google.maps.LatLng(p, infocenter.lng()));
             hsInfo.open(map);
         });
