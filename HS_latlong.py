@@ -29,14 +29,15 @@ with open(CSVDATA, 'rb') as csvfile:
 
 				if highschoolname not in highschools:
 					highschool_count[highschoolname] = 1
+					
+					school = re.findall(r'[.]*(school|School|Highschool|Academy|College|Institute)[.]*', highschoolname)
+					if school:
+						highschools.append(row[5])
+					else:
+						highschools.append('"' + row[5][1:-1] + ' School"')
+
 				else:
 					highschool_count[highschoolname] = highschool_count.get(highschoolname) + 1
-					
-				school = re.findall(r'[.]*(school|School|Highschool|Academy|College|Institute)[.]*', highschoolname)
-				if school:
-					highschools.append(row[5])
-				else:
-					highschools.append('"' + row[5][1:-1] + ' School"')
 				# areacode = re.sub("[^0-9]", "", row[4])
 				# if areacode[:1] == "1":
 				# 	areacode = areacode[1:4]
@@ -57,7 +58,7 @@ for highschool in highschools[2:]:
 		longitude = re.findall(r'[7-9,1][0-9]{1,2}\.[0-9]{3,10}', wikipage)
 		try:
 			highschool_locations[highschool] = latitude[0] + ",-" + longitude[0]
-			print(highschool + " // " + latlong[0] + ", " + latlong[1])
+			print(highschool + " // " + latitude[0] + ", " + longitude[1])
 		except:
 			print("Uh oh, no lat or long found for " + highschool + ". Continuing...")
 			continue
