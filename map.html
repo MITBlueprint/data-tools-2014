@@ -108,8 +108,10 @@
     function addCircleZoom(circle, count) {
         google.maps.event.addListener(map, 'zoom_changed', function() {
             var newzoom = map.getZoom();
-            if (newzoom >= 8) {
-                circle.setRadius((Math.log((count + 1) * .8)) * 4000);
+            if (newzoom == 8) {
+                circle.setRadius(3000);
+            } else if (newzoom == 9) {
+                circle.setRadius(1000);
             } else {
                 circle.setRadius(Math.log(count + 1) * (1 / (newzoom - 4)) * 30000);
             }
@@ -128,7 +130,11 @@
 
         google.maps.event.addListener(hsCircle, 'mouseover', function() {
             var infocenter = hsCircle.getCenter();
-            var p = infocenter.lat() + 0.1;
+            if (map.getZoom() <= 6) {
+                var p = infocenter.lat() + 0.1;
+            } else {
+                var p = infocenter.lat() + 0.02;
+            }
             hsInfo.setPosition(new google.maps.LatLng(p, infocenter.lng()));
             hsInfo.open(map);
         });
