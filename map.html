@@ -43,19 +43,45 @@
             map = new google.maps.Map(document.getElementById("map-canvas"),
                 mapOptions);
 
-            var bostonCircleOptions = {
+            var FivehCircleOptions = {
+                strokeColor: "#FFFF00",
+                strokeOpacity: 0.8,
+                strokeWeight: 1,
+                fillColor: "#FFFF00",
+                fillOpacity: 0.1,
+                map: map,
+                clickable: false,
+                center: Boston,
+                radius: 500000
+            };
+            var FivehCircle = new google.maps.Circle(FivehCircleOptions);
+
+
+            var maCircleOptions = {
                 strokeColor: "#00FF00",
                 strokeOpacity: 0.8,
                 strokeWeight: 1,
                 fillColor: "#00FF00",
-                fillOpacity: 0.2,
+                fillOpacity: 0.15,
                 map: map,
                 clickable: false,
                 center: Boston,
                 radius: 100000
             };
-            var bostonCircle = new google.maps.Circle(bostonCircleOptions);
+            var maCircle = new google.maps.Circle(maCircleOptions);
 
+            var bostonCircleOptions = {
+                strokeColor: "#00FFFF",
+                strokeOpacity: 0.8,
+                strokeWeight: 1,
+                fillColor: "#00FFFF",
+                fillOpacity: 0.2,
+                map: map,
+                clickable: false,
+                center: Boston,
+                radius: 10000
+            };
+            var bostonCircle = new google.maps.Circle(bostonCircleOptions);
 
             var i = 0;
 
@@ -71,6 +97,8 @@
 
                 if (distanceFromBoston < 100000) {
                     locationColor = '#2400e0';
+                } else if (highschools[name].count > 1) {
+                    locationColor = '#8d1168';
                 } else {
                     locationColor = '#FF0000';
                 }

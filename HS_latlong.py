@@ -6,6 +6,7 @@ CSVDATA = "../blueprint.csv"
 OUTPUTFILE = "highschools.js"
 
 # Vars
+totalrows = 0
 highschools = []
 highschool_locations = {}
 highschool_count = {}
@@ -18,8 +19,9 @@ import csv, re, wikipedia, bs4
 
 # Get list of high schools, with sanitization
 with open(CSVDATA, 'rb') as csvfile:
-		registrationreader = csv.reader(csvfile, delimiter=",", quotechar="|")
+		registrationreader = csv.reader(csvfile, delimiter=",", quotechar='"')
 		for row in registrationreader:
+				totalrows = totalrows + 1
 				highschoolname = row[5]
 
 				# make sure it's not homeschool
@@ -93,11 +95,12 @@ outputfile.write("var highschools = {};\n\n")
 
 for highschool, count in highschool_count.items():
 	if highschool_locations.get(highschool):
-		outputfile.write("highschools['" + str(highschool[1:-1]) + "'] = { center: new google.maps.LatLng(" + str(highschool_locations.get(highschool)) + "), count: " + str(count) + " };\n")
+		outputfile.write("highschools['" + str(highschool) + "'] = { center: new google.maps.LatLng(" + str(highschool_locations.get(highschool)) + "), count: " + str(count) + " };\n")
 
 outputfile.close()
 
 print("\nDone!")
+print("Total registrants = " + totalrows)
 
 # print("\n\n\n=================\nHigh school locations: \n\n")
 # print highschool_locations
