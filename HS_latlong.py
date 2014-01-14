@@ -7,6 +7,7 @@ OUTPUTFILE = "highschools.js"
 
 # Vars
 totalrows = 0
+errorcount = 0
 highschools = []
 highschool_locations = {}
 highschool_count = {}
@@ -62,6 +63,7 @@ for highschool in highschools[2:]:
 			highschool_locations[highschool] = latitude[0] + ",-" + longitude[0]
 			print(highschool + " // " + latitude[0] + ", " + longitude[1])
 		except:
+			errorcount = errorcount + 1
 			print("Uh oh, no lat or long found for " + highschool + ". Continuing...")
 			continue
 	except AttributeError:
@@ -77,6 +79,7 @@ for highschool in highschools[2:]:
 				highschool_locations[highschool] = locality + " " + region
 				print(highschool + " // " + locality + " " + region)
 			except:
+				errorcount = errorcount + 1
 				print("Couldn't find " + highschool + " on Wikipedia.")
 
 
@@ -95,12 +98,12 @@ outputfile.write("var highschools = {};\n\n")
 
 for highschool, count in highschool_count.items():
 	if highschool_locations.get(highschool):
-		outputfile.write("highschools['" + str(highschool) + "'] = { center: new google.maps.LatLng(" + str(highschool_locations.get(highschool)) + "), count: " + str(count) + " };\n")
+		outputfile.write("highschools['" + str(highschool.replace("'", "")) + "'] = { center: new google.maps.LatLng(" + str(highschool_locations.get(highschool)) + "), count: " + str(count) + " };\n")
 
 outputfile.close()
 
 print("\nDone!")
 print("Total registrants = " + totalrows)
-
+print("Total errors = " + errorcount)
 # print("\n\n\n=================\nHigh school locations: \n\n")
 # print highschool_locations
