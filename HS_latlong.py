@@ -1,7 +1,7 @@
 # Scrape high school lats/longs from Wikipedia
 
 # Edit to your exported Wufoo form CSV
-CSVDATA = "../blueprint.csv"
+CSVDATA = "blueprint.csv"
 # JSON output file
 OUTPUTFILE = "highschools.js"
 
@@ -103,7 +103,7 @@ for highschool, count in highschool_count.items():
 outputfile.close()
 
 print("\nDone!")
-print("Total registrants = " + totalrows)
-print("Total errors = " + errorcount)
+print("Total registrants = " + str(totalrows))
+print("Total errors = " + str(errorcount))
 # print("\n\n\n=================\nHigh school locations: \n\n")
 # print highschool_locations

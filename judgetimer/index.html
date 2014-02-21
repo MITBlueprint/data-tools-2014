@@ -1,0 +1,103 @@
+<html>
+
+<head>
+
+    <title>Judge timer</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="buzz.min.js"></script>
+
+    <style type="text/css">
+    body {
+        font-size: 36px;
+        font-family: Helvetica, Arial, sans-serif;
+    }
+    input {
+        font-size: 34px;
+        width: 800px;
+    }
+    .green {
+        color: green;
+    }
+    .red {
+        color: red;
+    }
+    </style>
+
+    <script>
+    var tickSound = new buzz.sound('gong.mp3');
+
+    tickSound.setVolume(10);
+    var tockSound = new buzz.sound('timeToMoveOn.mp3');
+
+    tickSound.load();
+    time = 0;
+    cycles = 0;
+    maxTime1 = 180; // 180
+    maxTime2 = 60; // 60
+    maxTime = maxTime2;
+
+    $(document).ready(function() {
+        $('#cycle1').html("Cycle 1 is " + maxTime1 + " seconds.");
+        $('#cycle2').html("Cycle 2 is " + maxTime2 + " seconds.");
+    });
+
+    setInterval(function() {
+
+        if (time >= maxTime) {
+            time = 0;
+            if (maxTime == maxTime1) {
+                tickSound.play();
+                maxTime = maxTime2;
+                $('#cycle1').removeClass('green');
+                $('#cycle2').addClass('green');
+                cycles += 1;
+                $('#cycles').html('Total cycle count: ' + cycles);
+            } else if (maxTime == maxTime2) {
+                tockSound.play();
+                maxTime = maxTime1;
+                $('#cycle2').removeClass('green');
+                $('#cycle1').addClass('green');
+            }
+        } else {
+            time += 1;
+        }
+
+        $('#time').html("Current time tick: " + time);
+
+    }, 1000);
+    </script>
+
+</head>
+
+<body>
+
+    <h1>Blueprint Judge Timer
+        <h1>
+
+            <hr>
+
+            <h2 id="cycle1"></h2>
+
+            <hr>
+
+            <h2 id="cycle2" class="green"></h2>
+
+            <hr>
+
+            <div id="time"></div>
+            <div id="cycles"></div>
+
+            <hr>
+
+            <!-- <h3>Cycle1 audio</h3>
+<input id="cycle1audio" value="http://staging.holachek.com/judgetimer/bell.mp3">
+<h3>Cycle2 audio</h3>
+<input id="cycle2audio" value="http://staging.holachek.com/judgetimer/bell.mp3">
+<h3>Cycle1 time</h3>
+<input id="cycle1time" value="180">
+<h3>Cycle2 time</h3>
+<input id="cycle1time" value="60"> -->
+
+</body>
+
+</html>
